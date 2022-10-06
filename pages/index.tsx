@@ -1,8 +1,9 @@
-import { useAddress, useContract, useContractRead } from '@thirdweb-dev/react';
+import { useAddress, useContract, useContractRead, useContractWrite } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import CountdownTimer from '../components/CountdownTimer';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
@@ -17,12 +18,32 @@ const Home: NextPage = () => {
   const [quantity, setQuantity] =useState<number>(1);
 
   const { data: remainingTickets } = useContractRead(contract, "RemainingTickets")
-  const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward")
-  const { data: ticketPrice } = useContractRead(contract, "ticketPrice")
-  const { data: ticketCommission } = useContractRead(contract, "ticketCommission")
-  const { data: expiration } = useContractRead(contract, "expiration")
+  const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
+  const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
+  const { data: ticketCommission } = useContractRead(contract, "ticketCommission");
+  const { data: expiration } = useContractRead(contract, "expiration");
+  const { mutateAsync: BuyTickets } = useContractWrite(contract, "BuyTickets")
 
-  console.log(address);
+  const handleClick = async () => {
+    if (!ticketPrice) return;
+
+    const notification = toast.loading('Buying your tickets...');
+
+    try {
+      const data = await BuyTickets([{
+        value: ethers.utils.parseEther(
+          (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
+        )
+      }]);
+
+      toast.success('Tickets purchased successfully!', {
+        id: notification
+      });
+    } catch (error) {
+      console.log('contract call failed', error);
+      toast.error('Whoops! something went wrong!')
+    }
+  };
 
   if (isLoading) return <Loading/>;
 
@@ -123,10 +144,13 @@ const Home: NextPage = () => {
                 </div>
               </div>
 
-              <button disabled={
-                expiration?.toString() < Date.now().toString() ||
-                remainingTickets?.toNumber() === 0
-              } className='mt-5 w-full bg-gradient-to-br from-orange-500 to-emerald-600 px-10 py-5 rounded-lg text-white shadow-xl disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed disabled:text-gray-100'>
+              <button
+                onClick={handleClick}
+                disabled={
+                  expiration?.toString() < Date.now().toString() ||
+                  remainingTickets?.toNumber() === 0
+                }
+                className='mt-5 w-full bg-gradient-to-br from-orange-500 to-emerald-600 px-10 py-5 rounded-lg text-white shadow-xl disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed disabled:text-gray-100'>
                 Buy tickets
               </button>
 
@@ -135,8 +159,6 @@ const Home: NextPage = () => {
 
         </div>
 
-        {/* Price per Ticket box */}
-        <div></div>
       </div>
 
     </div>

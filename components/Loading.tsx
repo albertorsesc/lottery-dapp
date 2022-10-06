@@ -8,7 +8,7 @@ function Loading() {
           Loading Web3 Lottery
         </h1>
       </div>
-      <RingLoader color='white' size={50} />
+      <RingLoader color='white' size={100} />
     </div>
   )
 }

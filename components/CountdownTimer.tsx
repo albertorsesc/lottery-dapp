@@ -25,20 +25,20 @@ function CountdownTimer() {
         <div>
           <h3 className='text-white text-sm mb-2 italic'>Time Remaming</h3>
 
-          <div className='flex space-x-6'>
+          <div className='md:flex md:space-x-6'>
 
             <div className='flex-1'>
-              <div className='countdown animate-pulse'>{hours}</div>
+              <div className='countdown animate-pulse'>{hours?.toString()}</div>
               <div className='countdown-label'>hours</div>
             </div>
 
             <div className='flex-1'>
-              <div className='countdown animate-pulse'>{minutes}</div>
+              <div className='countdown animate-pulse'>{minutes?.toString()}</div>
               <div className='countdown-label'>minutes</div>
             </div>
 
             <div className='flex-1'>
-              <div className='countdown animate-pulse'>{seconds}</div>
+              <div className='countdown animate-pulse'>{seconds?.toString()}</div>
               <div className='countdown-label'>seconds</div>
             </div>
 
