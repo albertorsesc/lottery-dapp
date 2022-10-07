@@ -2,6 +2,8 @@
 
 Lottery Dapp built using Solidity with MetaMask authentication.
 
+![Demo image](https://raw.githubusercontent.com/albertorsesc/lottery-dapp/master/public/web3-lottery-dapp-demo.png)
+
 
 ### Installation
 
